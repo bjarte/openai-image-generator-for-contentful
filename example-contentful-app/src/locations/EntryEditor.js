@@ -1,5 +1,12 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Configuration, OpenAIApi } from "openai";
+import { Textarea } from '@contentful/f36-components';
+import { FormControl } from '@contentful/f36-components';
+import { Button } from '@contentful/f36-components';
+import { Form } from '@contentful/f36-components';
+import { Paragraph } from '@contentful/f36-components';
+import { Workbench } from '@contentful/f36-workbench';
+
 
 const openai = new OpenAIApi(new Configuration({ apiKey: process.env.REACT_APP_OPENAI_API_KEY }));
 
@@ -7,10 +14,13 @@ const Entry = () => {
 
   const [descriptionInput, setDescriptionInput] = useState("");
   const [result, setResult] = useState([]);
+  const [submitted, setSubmitted] = useState(false);
 
-  const handleFormEvent = async (event) => {
+  const submitDescription = async (event) => {
 
     event.preventDefault();
+
+    setSubmitted(true);
 
     const image = await openai.createImage({
       prompt: descriptionInput,
@@ -27,37 +37,47 @@ const Entry = () => {
   }
 
   return (
-    <main>
+      <Workbench>
+        <Workbench.Header title="Bjarte's Wonderful OpenAI Image Creator" />
+        <Workbench.Content>
 
-      <form onSubmit={handleFormEvent}>
+          <Form onSubmit={submitDescription}>
+            <FormControl isRequired>
+              <FormControl.Label>Description</FormControl.Label>
+              <Textarea
+                name="description"
+                value={descriptionInput}
+                placeholder="Describe the image to create…"
+                onChange={(e) => setDescriptionInput(e.target.value)}
+              />
+              <FormControl.HelpText>
+                Please enter a text describing the image you want to generate.
+              </FormControl.HelpText>
+            </FormControl>
+            <Button variant="primary" type="submit" isDisabled={submitted}>
+              {submitted ? '⌛ Please wait…' : 'Generate images'}
+            </Button>
+          </Form>
 
-        <p>
-          <textarea
-            name="description"
-            placeholder="Describe the image to create"
-            cols="75"
-            rows="4"
-            value={descriptionInput}
-            onChange={(e) => setDescriptionInput(e.target.value)}
-          ></textarea>
-        </p>
+          {typeof (result[0]) !== "undefined" &&
+            <Paragraph>
+              <Paragraph marginTop="spacingXl">
+                <a href={result[0]}><img src={result[0]} width="310" height="310" alt="" /></a>
+              </Paragraph>
+              <Paragraph marginTop="spacingXl">
+                <a href={result[1]}><img src={result[1]} width="310" height="310" alt="" /></a>
+              </Paragraph>
+              <Paragraph marginTop="spacingXl">
+                <a href={result[2]}><img src={result[2]} width="310" height="310" alt="" /></a>
+              </Paragraph>
+              <Paragraph marginTop="spacingXl">
+                <a href={result[3]}><img src={result[3]} width="310" height="310" alt="" /></a>
+              </Paragraph>
+            </Paragraph>
+          }
 
-        <p>
-          <input type="submit" value="Generate images" />
-        </p>
-
-      </form>
-
-      {typeof (result[0]) !== "undefined" &&
-        <section>
-          <p><a href={result[0]}><img src={result[0]} width="400" height="400" alt="" /></a></p>
-          <p><a href={result[1]}><img src={result[1]} width="400" height="400" alt="" /></a></p>
-          <p><a href={result[2]}><img src={result[2]} width="400" height="400" alt="" /></a></p>
-          <p><a href={result[3]}><img src={result[3]} width="400" height="400" alt="" /></a></p>
-        </section>
-      }
-
-    </main>
+        </Workbench.Content>
+      </Workbench>
   );
 }
 
