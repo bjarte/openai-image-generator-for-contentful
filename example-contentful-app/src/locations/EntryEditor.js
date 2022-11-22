@@ -7,7 +7,6 @@ import { Form } from '@contentful/f36-components';
 import { Paragraph } from '@contentful/f36-components';
 import { Workbench } from '@contentful/f36-workbench';
 
-
 const openai = new OpenAIApi(new Configuration({ apiKey: process.env.REACT_APP_OPENAI_API_KEY }));
 
 const Entry = () => {
