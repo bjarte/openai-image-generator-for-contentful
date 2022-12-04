@@ -2,7 +2,7 @@ import { Configuration, OpenAIApi } from "openai";
 
 const openai = new OpenAIApi(new Configuration({ apiKey: process.env.REACT_APP_OPENAI_API_KEY }));
 
-export default async function (req, res) {
+export default async function generatorApi (req, res) {
 
   const image = await openai.createImage({
     prompt: req.body.description,
